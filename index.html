@@ -135,6 +135,7 @@
   .av-pick-circle img { width: 100%; height: 100%; object-fit: cover; }
   .av-pick-label { font-size: 11px; font-weight: 700; color: var(--ink-soft); text-align: center; }
   .sheet-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .hist-edit-date { font-size: 13px; color: var(--ink-soft); font-weight: 600; margin-bottom: 18px; }
   </style>
 </head>
 <body>
@@ -344,10 +345,11 @@ function fmtDate(iso) {
 function renderHistory() {
   const list=document.getElementById('history-list');
   if(!hist.length) { list.innerHTML='<div class="history-empty">Ainda não há registos.</div>'; return; }
-  list.innerHTML=hist.slice().reverse().map(e=>{
+  list.innerHTML=hist.slice().reverse().map((e,di)=>{
+    const origIdx=hist.length-1-di;
     const m=state.members.find(x=>x.id===e.memberId);
     const avId=m?m.avatarId:'av3'; const name=e.memberName||(m?m.name:'?');
-    return `<div class="history-item"><div class="av-sm"><img src="${avSrc(avId,true)}" alt="${name}"></div><div class="history-info"><div class="history-name">${name}</div><div class="history-date">${fmtDate(e.date)}</div></div><i class="ti ti-check history-check"></i></div>`;
+    return `<div class="history-item"><div class="av-sm"><img src="${avSrc(avId,true)}" alt="${name}"></div><div class="history-info"><div class="history-name">${name}</div><div class="history-date">${fmtDate(e.date)}</div></div><div class="member-actions"><button class="icon-btn icon-btn-edit" onclick="editHistEntry(${origIdx})"><i class="ti ti-pencil"></i></button><button class="icon-btn icon-btn-del" onclick="deleteHistEntry(${origIdx})"><i class="ti ti-trash"></i></button></div></div>`;
   }).join('');
 }
 function resetHistory() { if(confirm('Limpar todo o histórico?')) { hist=[]; saveHistory(); renderHistory(); } }
@@ -439,10 +441,49 @@ function fireConfetti() {
   }
 }
 
+let histEditIdx=null, histEditMemberId=null;
+function editHistEntry(idx) {
+  histEditIdx=idx;
+  const e=hist[idx]; histEditMemberId=e.memberId;
+  document.getElementById('hist-edit-date').textContent=fmtDate(e.date);
+  renderHistMemberPicker();
+  document.getElementById('hist-sheet-overlay').classList.add('open');
+}
+function closeHistSheet() { document.getElementById('hist-sheet-overlay').classList.remove('open'); histEditIdx=null; histEditMemberId=null; }
+function closeHistSheetOutside(e) { if(e.target.id==='hist-sheet-overlay') closeHistSheet(); }
+function renderHistMemberPicker() {
+  document.getElementById('hist-member-picker').innerHTML=state.members.map(m=>`<div class="av-pick ${m.id===histEditMemberId?'selected':''}" onclick="selectHistMember('${m.id}')"><div class="av-pick-circle"><img src="${avSrc(m.avatarId,true)}" alt="${m.name}"></div><span class="av-pick-label">${m.name}</span></div>`).join('');
+}
+function selectHistMember(id) { histEditMemberId=id; renderHistMemberPicker(); }
+function saveHistEntry() {
+  if(histEditIdx===null||!histEditMemberId) return;
+  const m=state.members.find(x=>x.id===histEditMemberId); if(!m) return;
+  hist[histEditIdx]={...hist[histEditIdx], memberId:m.id, memberName:m.name};
+  saveHistory(); closeHistSheet(); renderHistory();
+}
+function deleteHistEntry(idx) {
+  if(!confirm('Remover este registo?')) return;
+  hist.splice(idx,1); saveHistory(); renderHistory();
+}
+
 applyTheme(state.themeId);
 renderTurno();
 renderHistory();
 state.members.forEach(m=>{ const av=getAv(m.avatarId); if(av.src){new Image().src=av.src; new Image().src=av.srcSm;} });
 </script>
+<!-- HIST EDIT SHEET -->
+<div class="sheet-overlay" id="hist-sheet-overlay" onclick="closeHistSheetOutside(event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3 class="sheet-title">Editar registo</h3>
+    <p class="hist-edit-date" id="hist-edit-date"></p>
+    <label class="field-label">Quem aspirou?</label>
+    <div class="av-picker-grid" id="hist-member-picker"></div>
+    <div class="sheet-actions">
+      <button class="btn-ghost" onclick="closeHistSheet()">Cancelar</button>
+      <button class="btn-primary sm" onclick="saveHistEntry()">Guardar</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
