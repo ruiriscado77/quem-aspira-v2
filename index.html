@@ -470,6 +470,11 @@ applyTheme(state.themeId);
 renderTurno();
 renderHistory();
 state.members.forEach(m=>{ const av=getAv(m.avatarId); if(av.src){new Image().src=av.src; new Image().src=av.srcSm;} });
+
+// Registar service worker
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
 </script>
 <!-- HIST EDIT SHEET -->
 <div class="sheet-overlay" id="hist-sheet-overlay" onclick="closeHistSheetOutside(event)">
