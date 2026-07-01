@@ -1,11 +1,14 @@
 {
   "name": "Quem aspira?",
   "short_name": "Quem aspira?",
+  "description": "App de rotação de tarefas domésticas para famílias e partilha de casa.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#FF9F1C",
   "theme_color": "#FF9F1C",
+  "categories": ["lifestyle", "utilities"],
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
