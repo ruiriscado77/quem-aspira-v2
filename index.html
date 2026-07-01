@@ -136,14 +136,17 @@
   .av-pick-label { font-size: 11px; font-weight: 700; color: var(--ink-soft); text-align: center; }
   .sheet-actions { display: flex; gap: 10px; justify-content: flex-end; }
   .hist-edit-date { font-size: 13px; color: var(--ink-soft); font-weight: 600; margin-bottom: 18px; }
+  .lang-toggle { display: flex; gap: 4px; padding: 4px; background: rgba(255,255,255,0.18); border-radius: 999px; border: 1px solid rgba(255,255,255,0.3); }
+  .lang-btn { flex: 1; padding: 10px; border: none; border-radius: 999px; font-size: 14px; font-weight: 700; font-family: 'Nunito', sans-serif; cursor: pointer; background: none; color: rgba(255,255,255,0.85); transition: all 0.2s; }
+  .lang-btn.active { background: var(--surface); color: var(--ink); box-shadow: 0 3px 10px rgba(0,0,0,0.12); }
   </style>
 </head>
 <body>
 <div class="app">
-  <div class="header"><div class="header-card"><h1>Quem aspira?</h1></div></div>
+  <div class="header"><div class="header-card"><h1 data-i18n="appName">Quem aspira?</h1></div></div>
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('turno')">Este fim de semana</button>
-    <button class="tab" onclick="switchTab('sorteio')">Sorteio</button>
+    <button class="tab active" onclick="switchTab('turno')" data-i18n="tabWeekend">Este fim de semana</button>
+    <button class="tab" onclick="switchTab('sorteio')" data-i18n="tabDraw">Sorteio</button>
     <button class="tab tab-icon" onclick="switchTab('config')" title="Configurações"><i class="ti ti-settings"></i></button>
   </div>
   <div class="content">
@@ -151,14 +154,14 @@
     <div class="panel active" id="panel-turno">
       <div id="pending-view">
         <div class="card">
-          <p class="turn-label">Próximo a aspirar</p>
+          <p class="turn-label" data-i18n="turnLabel">Próximo a aspirar</p>
           <div id="main-av-wrap"></div>
           <p class="person-name" id="main-name"></p>
-          <span class="badge badge-pending"><i class="ti ti-clock"></i> Por fazer</span>
+          <span class="badge badge-pending"><i class="ti ti-clock"></i> <span data-i18n="badgePending">Por fazer</span></span>
         </div>
-        <button class="btn-primary" onclick="markDone()"><i class="ti ti-check"></i> Marcar como feito</button>
+        <button class="btn-primary" onclick="markDone()"><i class="ti ti-check"></i> <span data-i18n="btnMarkDone">Marcar como feito</span></button>
         <div class="next-info">
-          <span class="next-info-left">Na próxima semana</span>
+          <span class="next-info-left" data-i18n="nextWeek">Na próxima semana</span>
           <div class="next-info-right"><div class="av-sm" id="next-av"></div><span id="next-name"></span></div>
         </div>
       </div>
@@ -166,47 +169,54 @@
         <div class="card">
           <div class="done-icon"><i class="ti ti-check"></i></div>
           <p class="done-title" id="done-name"></p>
-          <p class="done-sub">Missão cumprida esta semana ✓</p>
+          <p class="done-sub" data-i18n="doneSub">Missão cumprida esta semana ✓</p>
         </div>
         <div class="next-info">
-          <span class="next-info-left">Na próxima semana</span>
+          <span class="next-info-left" data-i18n="nextWeek">Na próxima semana</span>
           <div class="next-info-right"><div class="av-sm" id="next-av2"></div><span id="next-name2"></span></div>
         </div>
       </div>
       <div id="empty-view" style="display:none">
         <div class="card">
           <p style="font-size:44px;margin-bottom:12px">⚙️</p>
-          <p class="done-title">Sem participantes</p>
-          <p class="done-sub">Vai às configurações e adiciona pessoas!</p>
+          <p class="done-title" data-i18n="emptyTitle">Sem participantes</p>
+          <p class="done-sub" data-i18n="emptySub">Vai às configurações e adiciona pessoas!</p>
         </div>
       </div>
     </div>
     <!-- SORTEIO -->
     <div class="panel" id="panel-sorteio">
       <div class="card">
-        <p class="turn-label">Sortear quem começa</p>
-        <p class="random-sub">Faz reset e escolhe aleatoriamente quem aspira este fim de semana.</p>
-        <div class="countdown-area" id="countdown-area"><p class="countdown-hint">Carrega no botão para sortear</p></div>
-        <button class="btn-primary" id="random-btn" onclick="startSortear()"><i class="ti ti-dice"></i> Sortear</button>
+        <p class="turn-label" data-i18n="drawLabel">Sortear quem começa</p>
+        <p class="random-sub" data-i18n="drawSub">Faz reset e escolhe aleatoriamente quem aspira este fim de semana.</p>
+        <div class="countdown-area" id="countdown-area"><p class="countdown-hint" data-i18n="drawHint">Carrega no botão para sortear</p></div>
+        <button class="btn-primary" id="random-btn" onclick="startSortear()"><i class="ti ti-dice"></i> <span data-i18n="btnDraw">Sortear</span></button>
       </div>
     </div>
     <!-- CONFIG -->
     <div class="panel" id="panel-config">
       <div class="settings-section">
-        <span class="settings-label">Participantes</span>
+        <span class="settings-label" data-i18n="settingsMembers">Participantes</span>
         <div class="settings-card" id="members-list"></div>
-        <button class="add-btn" onclick="openSheet(null)"><i class="ti ti-plus"></i> Adicionar pessoa</button>
+        <button class="add-btn" onclick="openSheet(null)"><i class="ti ti-plus"></i> <span data-i18n="settingsBtnAdd">Adicionar pessoa</span></button>
       </div>
       <div class="settings-section">
-        <span class="settings-label">Tema</span>
+        <span class="settings-label" data-i18n="settingsTheme">Tema</span>
         <div class="theme-grid" id="theme-grid"></div>
+      </div>
+      <div class="settings-section">
+        <span class="settings-label" data-i18n="settingsLang">Idioma</span>
+        <div class="lang-toggle">
+          <button class="lang-btn" id="lang-pt" onclick="selectLang('pt')">PT</button>
+          <button class="lang-btn" id="lang-en" onclick="selectLang('en')">EN</button>
+        </div>
       </div>
     </div>
   </div>
   <div class="history-section" id="history-section">
     <div class="history-head">
-      <h2>Histórico</h2>
-      <button class="reset-link" onclick="resetHistory()"><i class="ti ti-trash"></i> Limpar</button>
+      <h2 data-i18n="historyTitle">Histórico</h2>
+      <button class="reset-link" onclick="resetHistory()"><i class="ti ti-trash"></i> <span data-i18n="historyClear">Limpar</span></button>
     </div>
     <div class="history-list" id="history-list"></div>
   </div>
@@ -217,44 +227,108 @@
   <div class="sheet">
     <div class="sheet-handle"></div>
     <h3 class="sheet-title" id="sheet-title">Adicionar pessoa</h3>
-    <label class="field-label" for="edit-name">Nome</label>
-    <input class="name-input" id="edit-name" type="text" maxlength="20" placeholder="Ex: Maria" autocomplete="off" />
-    <label class="field-label">Avatar</label>
+    <label class="field-label" for="edit-name" data-i18n="fieldName">Nome</label>
+    <input class="name-input" id="edit-name" type="text" maxlength="20" placeholder="Ex: Maria" data-i18n-ph="namePlaceholder" autocomplete="off" />
+    <label class="field-label" data-i18n="fieldAvatar">Avatar</label>
     <div class="av-picker-grid" id="av-picker-grid"></div>
     <div class="sheet-actions">
-      <button class="btn-ghost" onclick="closeSheet()">Cancelar</button>
-      <button class="btn-primary sm" onclick="saveMember()">Guardar</button>
+      <button class="btn-ghost" onclick="closeSheet()" data-i18n="btnCancel">Cancelar</button>
+      <button class="btn-primary sm" onclick="saveMember()" data-i18n="btnSave">Guardar</button>
     </div>
   </div>
 </div>
 
 <script>
+const STRINGS = {
+  pt: {
+    appName:'Quem aspira?', tabWeekend:'Este fim de semana', tabDraw:'Sorteio',
+    turnLabel:'Próximo a aspirar', badgePending:'Por fazer', btnMarkDone:'Marcar como feito',
+    nextWeek:'Na próxima semana', emptyTitle:'Sem participantes',
+    emptySub:'Vai às configurações e adiciona pessoas!',
+    doneNameSuffix:' aspirou!', doneSub:'Missão cumprida esta semana ✓',
+    drawLabel:'Sortear quem começa',
+    drawSub:'Faz reset e escolhe aleatoriamente quem aspira este fim de semana.',
+    drawHint:'Carrega no botão para sortear', btnDraw:'Sortear',
+    settingsMembers:'Participantes', settingsBtnAdd:'Adicionar pessoa',
+    settingsTheme:'Tema', settingsLang:'Idioma',
+    historyTitle:'Histórico', historyClear:'Limpar',
+    historyEmpty:'Ainda não há registos.',
+    sheetAddTitle:'Adicionar pessoa', sheetEditTitle:'Editar pessoa',
+    fieldName:'Nome', namePlaceholder:'Ex: Maria', fieldAvatar:'Avatar',
+    btnCancel:'Cancelar', btnSave:'Guardar',
+    histEditTitle:'Editar registo', histWho:'Quem aspirou?',
+    confirmRemoveMember:'Remover esta pessoa?',
+    alertMinMembers:'Tem de existir pelo menos uma pessoa!',
+    confirmClearHistory:'Limpar todo o histórico?',
+    confirmRemoveEntry:'Remover este registo?',
+    membersEmpty:'Sem participantes.',
+    themeSunset:'Pôr do Sol', themeOcean:'Oceano', themeForest:'Floresta',
+    themeCandy:'Candy', themeLavanda:'Lavanda', themeCoral:'Coral',
+  },
+  en: {
+    appName:"Who's up?", tabWeekend:'This weekend', tabDraw:'Draw',
+    turnLabel:'Next to vacuum', badgePending:'To do', btnMarkDone:'Mark as done',
+    nextWeek:'Next week', emptyTitle:'No participants',
+    emptySub:'Go to settings and add people!',
+    doneNameSuffix:' vacuumed!', doneSub:'Mission accomplished this week ✓',
+    drawLabel:'Draw who starts',
+    drawSub:'Reset and randomly choose who vacuums this weekend.',
+    drawHint:'Press the button to draw', btnDraw:'Draw',
+    settingsMembers:'Participants', settingsBtnAdd:'Add person',
+    settingsTheme:'Theme', settingsLang:'Language',
+    historyTitle:'History', historyClear:'Clear',
+    historyEmpty:'No records yet.',
+    sheetAddTitle:'Add person', sheetEditTitle:'Edit person',
+    fieldName:'Name', namePlaceholder:'E.g.: Mary', fieldAvatar:'Avatar',
+    btnCancel:'Cancel', btnSave:'Save',
+    histEditTitle:'Edit record', histWho:'Who vacuumed?',
+    confirmRemoveMember:'Remove this person?',
+    alertMinMembers:'There must be at least one person!',
+    confirmClearHistory:'Clear all history?',
+    confirmRemoveEntry:'Remove this record?',
+    membersEmpty:'No participants.',
+    themeSunset:'Sunset', themeOcean:'Ocean', themeForest:'Forest',
+    themeCandy:'Candy', themeLavanda:'Lavender', themeCoral:'Coral',
+  }
+};
+function t(key) { return (STRINGS[state.lang||'pt']||STRINGS.pt)[key]||key; }
+function applyLang() {
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent=t(el.getAttribute('data-i18n')); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder=t(el.getAttribute('data-i18n-ph')); });
+  const lpt=document.getElementById('lang-pt'), len=document.getElementById('lang-en');
+  if(lpt) lpt.classList.toggle('active', (state.lang||'pt')==='pt');
+  if(len) len.classList.toggle('active', state.lang==='en');
+  renderTurno(); renderHistory();
+  if(document.getElementById('panel-config').classList.contains('active')) renderThemeGrid();
+}
+function selectLang(lang) { state.lang=lang; saveState(); applyLang(); }
+
 const STORAGE_KEY = 'qa-v2-state-v2';
 const HISTORY_KEY = 'qa-v2-history-v2';
 
 const AVATARS = [
   { id:'joao',   src:'avatars/joao-512.png',   srcSm:'avatars/joao-128.png',   label:'Avatar 1' },
   { id:'rafael', src:'avatars/rafael-512.png', srcSm:'avatars/rafael-128.png', label:'Avatar 2' },
-  { id:'av3',  emoji:'🌸', bg:'#FFB3C6', label:'Rosa'    },
-  { id:'av4',  emoji:'🌿', bg:'#B5EAD7', label:'Verde'   },
-  { id:'av5',  emoji:'⭐', bg:'#C7CEEA', label:'Azul'    },
-  { id:'av6',  emoji:'🎈', bg:'#FFDAC1', label:'Laranja' },
-  { id:'av7',  emoji:'🦋', bg:'#E2D9F3', label:'Lilás'   },
-  { id:'av8',  emoji:'🐶', bg:'#FFF0CC', label:'Amarelo' },
+  { id:'av3',  emoji:'🌸', bg:'#FFB3C6', label:'Avatar 3' },
+  { id:'av4',  emoji:'🌿', bg:'#B5EAD7', label:'Avatar 4' },
+  { id:'av5',  emoji:'⭐', bg:'#C7CEEA', label:'Avatar 5' },
+  { id:'av6',  emoji:'🎈', bg:'#FFDAC1', label:'Avatar 6' },
+  { id:'av7',  emoji:'🦋', bg:'#E2D9F3', label:'Avatar 7' },
+  { id:'av8',  emoji:'🐶', bg:'#FFF0CC', label:'Avatar 8' },
 ];
 
 const THEMES = [
-  { id:'sunset',  name:'Pôr do Sol', from:'#FFD93D', mid:'#FF9F1C', to:'#E8720C', btn:'#FF5C3D', ink:'#4A2E14', inkSoft:'#9C7350', surface:'#FFFCF5', tc:'#FF9F1C' },
-  { id:'ocean',   name:'Oceano',     from:'#ADE8F4', mid:'#48CAE4', to:'#0096C7', btn:'#0077B6', ink:'#03045E', inkSoft:'#4A7FA5', surface:'#F0FBFF', tc:'#48CAE4' },
-  { id:'forest',  name:'Floresta',   from:'#B7E4C7', mid:'#74C69D', to:'#40916C', btn:'#2D6A4F', ink:'#1B4332', inkSoft:'#40916C', surface:'#F6FBF4', tc:'#74C69D' },
-  { id:'candy',   name:'Candy',      from:'#FFC8DD', mid:'#FFAFCC', to:'#CDB4DB', btn:'#7B2D8B', ink:'#3D1C6E', inkSoft:'#7048A8', surface:'#FFF5FC', tc:'#FFAFCC' },
-  { id:'lavanda', name:'Lavanda',    from:'#DDD6FE', mid:'#A78BFA', to:'#7C3AED', btn:'#4C1D95', ink:'#1A0045', inkSoft:'#6B5B95', surface:'#FAF6FF', tc:'#A78BFA' },
-  { id:'coral',   name:'Coral',      from:'#FFDDD2', mid:'#FF8B70', to:'#E63946', btn:'#9D0208', ink:'#370617', inkSoft:'#7F1D1D', surface:'#FFF5F3', tc:'#FF8B70' },
+  { id:'sunset',  nameKey:'themeSunset',  name:'Pôr do Sol', from:'#FFD93D', mid:'#FF9F1C', to:'#E8720C', btn:'#FF5C3D', ink:'#4A2E14', inkSoft:'#9C7350', surface:'#FFFCF5', tc:'#FF9F1C' },
+  { id:'ocean',   nameKey:'themeOcean',   name:'Oceano',     from:'#ADE8F4', mid:'#48CAE4', to:'#0096C7', btn:'#0077B6', ink:'#03045E', inkSoft:'#4A7FA5', surface:'#F0FBFF', tc:'#48CAE4' },
+  { id:'forest',  nameKey:'themeForest',  name:'Floresta',   from:'#B7E4C7', mid:'#74C69D', to:'#40916C', btn:'#2D6A4F', ink:'#1B4332', inkSoft:'#40916C', surface:'#F6FBF4', tc:'#74C69D' },
+  { id:'candy',   nameKey:'themeCandy',   name:'Candy',      from:'#FFC8DD', mid:'#FFAFCC', to:'#CDB4DB', btn:'#7B2D8B', ink:'#3D1C6E', inkSoft:'#7048A8', surface:'#FFF5FC', tc:'#FFAFCC' },
+  { id:'lavanda', nameKey:'themeLavanda', name:'Lavanda',    from:'#DDD6FE', mid:'#A78BFA', to:'#7C3AED', btn:'#4C1D95', ink:'#1A0045', inkSoft:'#6B5B95', surface:'#FAF6FF', tc:'#A78BFA' },
+  { id:'coral',   nameKey:'themeCoral',   name:'Coral',      from:'#FFDDD2', mid:'#FF8B70', to:'#E63946', btn:'#9D0208', ink:'#370617', inkSoft:'#7F1D1D', surface:'#FFF5F3', tc:'#FF8B70' },
 ];
 
 const DEFAULT_STATE = {
   members: [],
-  currentIdx: 0, done: false, themeId: 'sunset',
+  currentIdx: 0, done: false, themeId: 'sunset', lang: 'pt',
 };
 
 function loadState()   { try { const r=localStorage.getItem(STORAGE_KEY); if(r) return JSON.parse(r); } catch(e){} return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
@@ -316,7 +390,7 @@ function renderTurno() {
   document.getElementById('main-name').textContent=cur.name;
   if(state.done) {
     pend.style.display='none'; done.style.display='block';
-    document.getElementById('done-name').textContent=cur.name+' aspirou!';
+    document.getElementById('done-name').textContent=cur.name+t('doneNameSuffix');
     const na2=document.getElementById('next-av2'); na2.innerHTML=''; na2.appendChild(makeImg(nxt.avatarId,true));
     document.getElementById('next-name2').textContent=nxt.name;
   } else {
@@ -341,7 +415,7 @@ function fmtDate(iso) {
 }
 function renderHistory() {
   const list=document.getElementById('history-list');
-  if(!hist.length) { list.innerHTML='<div class="history-empty">Ainda não há registos.</div>'; return; }
+  if(!hist.length) { list.innerHTML='<div class="history-empty">'+t('historyEmpty')+'</div>'; return; }
   list.innerHTML=hist.slice().reverse().map((e,di)=>{
     const origIdx=hist.length-1-di;
     const m=state.members.find(x=>x.id===e.memberId);
@@ -349,16 +423,16 @@ function renderHistory() {
     return `<div class="history-item"><div class="av-sm"><img src="${avSrc(avId,true)}" alt="${name}"></div><div class="history-info"><div class="history-name">${name}</div><div class="history-date">${fmtDate(e.date)}</div></div><div class="member-actions"><button class="icon-btn icon-btn-edit" onclick="editHistEntry(${origIdx})"><i class="ti ti-pencil"></i></button><button class="icon-btn icon-btn-del" onclick="deleteHistEntry(${origIdx})"><i class="ti ti-trash"></i></button></div></div>`;
   }).join('');
 }
-function resetHistory() { if(confirm('Limpar todo o histórico?')) { hist=[]; saveHistory(); renderHistory(); } }
+function resetHistory() { if(confirm(t('confirmClearHistory'))) { hist=[]; saveHistory(); renderHistory(); } }
 
 function renderSettings() { renderMembersList(); renderThemeGrid(); }
 function renderMembersList() {
   const list=document.getElementById('members-list');
-  if(!state.members.length) { list.innerHTML='<div class="history-empty">Sem participantes.</div>'; return; }
+  if(!state.members.length) { list.innerHTML='<div class="history-empty">'+t('membersEmpty')+'</div>'; return; }
   list.innerHTML=state.members.map(m=>`<div class="member-row"><div class="av-sm"><img src="${avSrc(m.avatarId,true)}" alt="${m.name}"></div><div class="member-info"><div class="member-name">${m.name}</div></div><div class="member-actions"><button class="icon-btn icon-btn-edit" onclick="openSheet('${m.id}')"><i class="ti ti-pencil"></i></button><button class="icon-btn icon-btn-del" onclick="deleteMember('${m.id}')"><i class="ti ti-trash"></i></button></div></div>`).join('');
 }
 function renderThemeGrid() {
-  document.getElementById('theme-grid').innerHTML=THEMES.map(t=>`<div class="theme-card ${t.id===state.themeId?'selected':''}" onclick="selectTheme('${t.id}')"><div class="theme-preview" style="background:linear-gradient(135deg,${t.from},${t.mid},${t.to})"></div><div class="theme-label">${t.name}</div></div>`).join('');
+  document.getElementById('theme-grid').innerHTML=THEMES.map(th=>`<div class="theme-card ${th.id===state.themeId?'selected':''}" onclick="selectTheme('${th.id}')"><div class="theme-preview" style="background:linear-gradient(135deg,${th.from},${th.mid},${th.to})"></div><div class="theme-label">${t(th.nameKey)}</div></div>`).join('');
 }
 function selectTheme(id) { state.themeId=id; saveState(); applyTheme(id); renderThemeGrid(); }
 
@@ -366,7 +440,7 @@ function openSheet(memberId) {
   editingId=memberId;
   const m=memberId?state.members.find(x=>x.id===memberId):null;
   editingAvId=m?m.avatarId:AVATARS[0].id;
-  document.getElementById('sheet-title').textContent=m?'Editar pessoa':'Adicionar pessoa';
+  document.getElementById('sheet-title').textContent=m?t('sheetEditTitle'):t('sheetAddTitle');
   const nameEl=document.getElementById('edit-name'); nameEl.value=m?m.name:''; nameEl.classList.remove('error');
   renderAvPicker();
   document.getElementById('sheet-overlay').classList.add('open');
@@ -387,8 +461,8 @@ function saveMember() {
   saveState(); closeSheet(); renderTurno(); renderMembersList(); renderHistory();
 }
 function deleteMember(memberId) {
-  if(state.members.length<=1) { alert('Tem de existir pelo menos uma pessoa!'); return; }
-  if(!confirm('Remover esta pessoa?')) return;
+  if(state.members.length<=1) { alert(t('alertMinMembers')); return; }
+  if(!confirm(t('confirmRemoveMember'))) return;
   const idx=state.members.findIndex(m=>m.id===memberId); if(idx===-1) return;
   state.members.splice(idx,1);
   if(state.currentIdx>=state.members.length) state.currentIdx=0;
@@ -420,7 +494,7 @@ function startSortear() {
       const container=document.createElement('div'); container.style.textAlign='center'; container.appendChild(avDiv);
       const nameEl=document.createElement('p'); nameEl.className='reveal-name'; nameEl.textContent=m.name; container.appendChild(nameEl);
       area.innerHTML=''; area.appendChild(container);
-      setTimeout(()=>{ sorting=false; document.getElementById('random-btn').disabled=false; area.innerHTML='<p class="countdown-hint">Carrega no botão para sortear</p>'; }, 2600);
+      setTimeout(()=>{ sorting=false; document.getElementById('random-btn').disabled=false; area.innerHTML='<p class="countdown-hint">'+t('drawHint')+'</p>'; }, 2600);
     }
   }
   tick();
@@ -459,11 +533,12 @@ function saveHistEntry() {
   saveHistory(); closeHistSheet(); renderHistory();
 }
 function deleteHistEntry(idx) {
-  if(!confirm('Remover este registo?')) return;
+  if(!confirm(t('confirmRemoveEntry'))) return;
   hist.splice(idx,1); saveHistory(); renderHistory();
 }
 
 applyTheme(state.themeId);
+applyLang();
 renderTurno();
 renderHistory();
 state.members.forEach(m=>{ const av=getAv(m.avatarId); if(av.src){new Image().src=av.src; new Image().src=av.srcSm;} });
@@ -477,13 +552,13 @@ if('serviceWorker' in navigator) {
 <div class="sheet-overlay" id="hist-sheet-overlay" onclick="closeHistSheetOutside(event)">
   <div class="sheet">
     <div class="sheet-handle"></div>
-    <h3 class="sheet-title">Editar registo</h3>
+    <h3 class="sheet-title" id="hist-sheet-title">Editar registo</h3>
     <p class="hist-edit-date" id="hist-edit-date"></p>
-    <label class="field-label">Quem aspirou?</label>
+    <label class="field-label" data-i18n="histWho">Quem aspirou?</label>
     <div class="av-picker-grid" id="hist-member-picker"></div>
     <div class="sheet-actions">
-      <button class="btn-ghost" onclick="closeHistSheet()">Cancelar</button>
-      <button class="btn-primary sm" onclick="saveHistEntry()">Guardar</button>
+      <button class="btn-ghost" onclick="closeHistSheet()" data-i18n="btnCancel">Cancelar</button>
+      <button class="btn-primary sm" onclick="saveHistEntry()" data-i18n="btnSave">Guardar</button>
     </div>
   </div>
 </div>
