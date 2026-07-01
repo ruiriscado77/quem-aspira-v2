@@ -39,6 +39,7 @@
   .panel { display: none; } .panel.active { display: block; }
   .card { background: var(--surface); border-radius: var(--radius-xl); padding: 24px 22px; text-align: center; margin-bottom: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.14); }
   .turn-label { font-size: 12px; color: var(--ink-soft); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; }
+  #panel-turno .card { min-height: 262px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .av-wrap { position: relative; margin: 0 auto 14px; animation: avFloat 3.2s ease-in-out infinite; }
   .av-wrap.av-lg { width: 110px; height: 110px; }
   .av-wrap.av-xl { width: 112px; height: 112px; }
@@ -149,7 +150,7 @@
     <div class="panel active" id="panel-turno">
       <div id="pending-view">
         <div class="card">
-          <p class="turn-label">A aspirar agora</p>
+          <p class="turn-label">Próximo a aspirar</p>
           <div id="main-av-wrap"></div>
           <p class="person-name" id="main-name"></p>
           <span class="badge badge-pending"><i class="ti ti-clock"></i> Por fazer</span>
