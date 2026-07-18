@@ -72,13 +72,20 @@
   .done-sub { font-size: 14px; color: var(--ink-soft); font-weight: 600; }
   .confetti-piece { position: absolute; top: 50%; left: 50%; width: 7px; height: 11px; border-radius: 2px; opacity: 0; pointer-events: none; animation: confettiBurst 1s ease-out forwards; }
   @keyframes confettiBurst { 0% { opacity: 1; transform: translate(-50%,-50%) rotate(0deg); } 100% { opacity: 0; transform: translate(-50%,-50%) rotate(var(--rot)) translate(var(--dx),var(--dy)); } }
-  .random-sub { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 24px; font-weight: 600; }
-  .countdown-area { min-height: 150px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+  .random-sub { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 16px; font-weight: 600; }
+  .free-toggle { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px 8px 16px; border-radius: 999px; background: rgba(0,0,0,0.045); border: 1.5px solid var(--border); cursor: pointer; user-select: none; -webkit-user-select: none; margin-bottom: 20px; transition: background 0.2s; }
+  .free-toggle:active { opacity: 0.8; }
+  .free-toggle-label { font-size: 13px; font-weight: 800; color: var(--ink-soft); transition: color 0.2s; }
+  .free-toggle.on .free-toggle-label { color: var(--ink); }
+  .switch { width: 42px; height: 24px; border-radius: 999px; background: rgba(0,0,0,0.15); position: relative; transition: background 0.25s; flex-shrink: 0; }
+  .free-toggle.on .switch { background: var(--btn); }
+  .switch-knob { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.25); transition: transform 0.25s cubic-bezier(.36,1.5,.4,1); }
+  .free-toggle.on .switch-knob { transform: translateX(18px); }
+  .countdown-area { height: 186px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
   .countdown-hint { font-size: 14px; color: var(--ink-soft); font-weight: 600; }
-  .countdown-stack { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-  .countdown-num { font-family: 'Fredoka', sans-serif; font-size: 80px; font-weight: 700; line-height: 1; color: var(--btn); display: inline-block; animation: countdownPop 0.7s cubic-bezier(.36,1.6,.4,1); }
+  .countdown-num { font-family: 'Fredoka', sans-serif; font-size: 46px; font-weight: 700; line-height: 1; color: var(--btn); display: inline-block; animation: countdownPop 0.7s cubic-bezier(.36,1.6,.4,1); }
   @keyframes countdownPop { 0% { transform: scale(0.3) rotate(-8deg); opacity: 0; } 55% { transform: scale(1.25) rotate(4deg); opacity: 1; } 75% { transform: scale(0.92) rotate(-2deg); } 100% { transform: scale(1) rotate(0deg); } }
-  .mystery-av { width: 90px; height: 90px; border-radius: 50%; background: rgba(255,255,255,0.25); border: 3px dashed rgba(255,255,255,0.55); display: flex; align-items: center; justify-content: center; font-family: 'Fredoka', sans-serif; font-size: 38px; color: rgba(255,255,255,0.8); animation: mysteryShake 0.4s ease-in-out infinite; }
+  .mystery-av { width: 90px; height: 90px; border-radius: 50%; background: rgba(0,0,0,0.05); border: 3px dashed var(--ink-soft); display: flex; align-items: center; justify-content: center; animation: mysteryShake 0.4s ease-in-out infinite; }
   @keyframes mysteryShake { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
   .reveal-name { font-family: 'Fredoka', sans-serif; font-size: 30px; font-weight: 600; color: var(--ink); animation: revealPop 0.5s ease; margin-top: 8px; }
   @keyframes revealPop { 0% { transform: scale(1.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -135,7 +142,6 @@
   .av-pick-circle img { width: 100%; height: 100%; object-fit: cover; }
   .av-pick-label { font-size: 11px; font-weight: 700; color: var(--ink-soft); text-align: center; }
   .sheet-actions { display: flex; gap: 10px; justify-content: flex-end; }
-  .hist-edit-date { font-size: 13px; color: var(--ink-soft); font-weight: 600; margin-bottom: 18px; }
   .lang-toggle { display: flex; gap: 4px; padding: 4px; background: rgba(255,255,255,0.18); border-radius: 999px; border: 1px solid rgba(255,255,255,0.3); }
   .lang-btn { flex: 1; padding: 10px; border: none; border-radius: 999px; font-size: 14px; font-weight: 700; font-family: 'Nunito', sans-serif; cursor: pointer; background: none; color: rgba(255,255,255,0.85); transition: all 0.2s; }
   .lang-btn.active { background: var(--surface); color: var(--ink); box-shadow: 0 3px 10px rgba(0,0,0,0.12); }
@@ -188,7 +194,11 @@
     <div class="panel" id="panel-sorteio">
       <div class="card">
         <p class="turn-label" data-i18n="drawLabel">Sortear quem começa</p>
-        <p class="random-sub" data-i18n="drawSub">Faz reset e escolhe aleatoriamente quem aspira este fim de semana.</p>
+        <p class="random-sub" id="draw-sub" data-i18n="drawSub">Faz reset e escolhe aleatoriamente quem aspira este fim de semana.</p>
+        <div class="free-toggle" onclick="toggleFreeMode()">
+          <span class="free-toggle-label" data-i18n="drawFreeLabel">Sorteio livre</span>
+          <div class="switch" id="free-switch"><div class="switch-knob"></div></div>
+        </div>
         <div class="countdown-area" id="countdown-area"><p class="countdown-hint" data-i18n="drawHint">Carrega no botão para sortear</p></div>
         <button class="btn-primary" id="random-btn" onclick="startSortear()"><i class="ti ti-dice"></i> <span data-i18n="btnDraw">Sortear</span></button>
       </div>
@@ -256,7 +266,9 @@ const STRINGS = {
     sheetAddTitle:'Adicionar pessoa', sheetEditTitle:'Editar pessoa',
     fieldName:'Nome', namePlaceholder:'Ex: Maria', fieldAvatar:'Avatar',
     btnCancel:'Cancelar', btnSave:'Guardar',
-    histEditTitle:'Editar registo', histWho:'Quem aspirou?',
+    histEditTitle:'Editar registo', histWho:'Quem aspirou?', histWhen:'Data e hora',
+    drawFreeLabel:'Sorteio livre',
+    drawSubFree:'Sorteia sem mudar quem aspira — para outras tarefas (mesa, lixo...).',
     confirmRemoveMember:'Remover esta pessoa?',
     alertMinMembers:'Tem de existir pelo menos uma pessoa!',
     confirmClearHistory:'Limpar todo o histórico?',
@@ -281,7 +293,9 @@ const STRINGS = {
     sheetAddTitle:'Add person', sheetEditTitle:'Edit person',
     fieldName:'Name', namePlaceholder:'E.g.: Mary', fieldAvatar:'Avatar',
     btnCancel:'Cancel', btnSave:'Save',
-    histEditTitle:'Edit record', histWho:'Who vacuumed?',
+    histEditTitle:'Edit record', histWho:'Who vacuumed?', histWhen:'Date and time',
+    drawFreeLabel:'Free draw',
+    drawSubFree:"Draw without changing who vacuums — for other chores (table, trash...).",
     confirmRemoveMember:'Remove this person?',
     alertMinMembers:'There must be at least one person!',
     confirmClearHistory:'Clear all history?',
@@ -299,6 +313,7 @@ function applyLang() {
   if(lpt) lpt.classList.toggle('active', (state.lang||'pt')==='pt');
   if(len) len.classList.toggle('active', state.lang==='en');
   renderTurno(); renderHistory();
+  if(freeMode) document.getElementById('draw-sub').textContent=t('drawSubFree');
   if(document.getElementById('panel-config').classList.contains('active')) renderThemeGrid();
 }
 function selectLang(lang) { state.lang=lang; saveState(); applyLang(); }
@@ -479,15 +494,21 @@ function switchTab(t) {
 }
 
 let sorting=false;
+let freeMode=false;
+function toggleFreeMode() {
+  freeMode=!freeMode;
+  document.querySelector('.free-toggle').classList.toggle('on', freeMode);
+  document.getElementById('draw-sub').textContent=t(freeMode?'drawSubFree':'drawSub');
+}
 function startSortear() {
   if(sorting||!state.members.length) return;
   sorting=true; document.getElementById('random-btn').disabled=true;
   const area=document.getElementById('countdown-area'); let count=3;
   function tick() {
-    if(count>0) { area.innerHTML=`<div class="countdown-stack"><div class="mystery-av">?</div><span class="countdown-num">${count}</span></div>`; count--; setTimeout(tick,700); }
+    if(count>0) { area.innerHTML=`<div class="mystery-av"><span class="countdown-num">${count}</span></div>`; count--; setTimeout(tick,700); }
     else {
       const chosen=Math.floor(Math.random()*state.members.length); const m=state.members[chosen];
-      state.currentIdx=chosen; state.done=false; saveState(); renderTurno();
+      if(!freeMode) { state.currentIdx=chosen; state.done=false; saveState(); renderTurno(); }
       const avDiv=document.createElement('div'); avDiv.className='av-wrap av-xl happy';
       const circle=document.createElement('div'); circle.className='av-circle'; circle.appendChild(makeImg(m.avatarId,false));
       avDiv.appendChild(circle); avDiv.insertAdjacentHTML('beforeend','<span class="av-sparkle sp1">✨</span><span class="av-sparkle sp2">✨</span>');
@@ -513,10 +534,14 @@ function fireConfetti() {
 }
 
 let histEditIdx=null, histEditMemberId=null;
+function toLocalInput(iso) {
+  const d=new Date(iso); const p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
 function editHistEntry(idx) {
   histEditIdx=idx;
   const e=hist[idx]; histEditMemberId=e.memberId;
-  document.getElementById('hist-edit-date').textContent=fmtDate(e.date);
+  document.getElementById('hist-edit-datetime').value=toLocalInput(e.date);
   renderHistMemberPicker();
   document.getElementById('hist-sheet-overlay').classList.add('open');
 }
@@ -529,7 +554,10 @@ function selectHistMember(id) { histEditMemberId=id; renderHistMemberPicker(); }
 function saveHistEntry() {
   if(histEditIdx===null||!histEditMemberId) return;
   const m=state.members.find(x=>x.id===histEditMemberId); if(!m) return;
-  hist[histEditIdx]={...hist[histEditIdx], memberId:m.id, memberName:m.name};
+  const dtEl=document.getElementById('hist-edit-datetime');
+  const newDate=(dtEl.value&&!isNaN(new Date(dtEl.value)))?new Date(dtEl.value).toISOString():hist[histEditIdx].date;
+  hist[histEditIdx]={...hist[histEditIdx], memberId:m.id, memberName:m.name, date:newDate};
+  hist.sort((a,b)=>new Date(a.date)-new Date(b.date));
   saveHistory(); closeHistSheet(); renderHistory();
 }
 function deleteHistEntry(idx) {
@@ -552,8 +580,9 @@ if('serviceWorker' in navigator) {
 <div class="sheet-overlay" id="hist-sheet-overlay" onclick="closeHistSheetOutside(event)">
   <div class="sheet">
     <div class="sheet-handle"></div>
-    <h3 class="sheet-title" id="hist-sheet-title">Editar registo</h3>
-    <p class="hist-edit-date" id="hist-edit-date"></p>
+    <h3 class="sheet-title" id="hist-sheet-title" data-i18n="histEditTitle">Editar registo</h3>
+    <label class="field-label" for="hist-edit-datetime" data-i18n="histWhen">Data e hora</label>
+    <input class="name-input" id="hist-edit-datetime" type="datetime-local" />
     <label class="field-label" data-i18n="histWho">Quem aspirou?</label>
     <div class="av-picker-grid" id="hist-member-picker"></div>
     <div class="sheet-actions">
