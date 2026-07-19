@@ -1,4 +1,4 @@
-const CACHE = 'qa-v2-cache-v2';
+const CACHE = 'qa-v2-cache-v1';
 const ASSETS = [
   './',
   './index.html',
@@ -26,28 +26,7 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
-  const isAppShell = e.request.mode === 'navigate'
-    || url.pathname.endsWith('/index.html')
-    || url.pathname.endsWith('/');
-
-  if (isAppShell) {
-    // Network-first: a app atualiza-se sempre que há rede; cache só como fallback offline
-    e.respondWith(
-      fetch(e.request)
-        .then(r => {
-          const copy = r.clone();
-          caches.open(CACHE).then(c => c.put(e.request, copy));
-          return r;
-        })
-        .catch(() =>
-          caches.match(e.request).then(c => c || caches.match('./index.html'))
-        )
-    );
-  } else {
-    // Cache-first para assets estáticos (ícones, avatares, manifest)
-    e.respondWith(
-      caches.match(e.request).then(cached => cached || fetch(e.request))
-    );
-  }
+  e.respondWith(
+    caches.match(e.request).then(cached => cached || fetch(e.request))
+  );
 });
