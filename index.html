@@ -309,13 +309,12 @@ const HISTORY_KEY = 'qa-v2-history-v2';
 const AVATARS = [
   { id:'joao',   src:'avatars/joao-512.png',   srcSm:'avatars/joao-128.png',   label:'Avatar 1' },
   { id:'rafael', src:'avatars/rafael-512.png', srcSm:'avatars/rafael-128.png', label:'Avatar 2' },
-  { id:'avatar3', src:'avatars/avatar3-512.png', srcSm:'avatars/avatar3-128.png', label:'Avatar 3' },
-  { id:'av3',  emoji:'🌸', bg:'#FFB3C6', label:'Avatar 4' },
-  { id:'av4',  emoji:'🌿', bg:'#B5EAD7', label:'Avatar 5' },
-  { id:'av5',  emoji:'⭐', bg:'#C7CEEA', label:'Avatar 6' },
-  { id:'av6',  emoji:'🎈', bg:'#FFDAC1', label:'Avatar 7' },
-  { id:'av7',  emoji:'🦋', bg:'#E2D9F3', label:'Avatar 8' },
-  { id:'av8',  emoji:'🐶', bg:'#FFF0CC', label:'Avatar 9' },
+  { id:'av3',  emoji:'🌸', bg:'#FFB3C6', label:'Avatar 3' },
+  { id:'av4',  emoji:'🌿', bg:'#B5EAD7', label:'Avatar 4' },
+  { id:'av5',  emoji:'⭐', bg:'#C7CEEA', label:'Avatar 5' },
+  { id:'av6',  emoji:'🎈', bg:'#FFDAC1', label:'Avatar 6' },
+  { id:'av7',  emoji:'🦋', bg:'#E2D9F3', label:'Avatar 7' },
+  { id:'av8',  emoji:'🐶', bg:'#FFF0CC', label:'Avatar 8' },
 ];
 
 const THEMES = [
@@ -543,7 +542,6 @@ applyLang();
 renderTurno();
 renderHistory();
 state.members.forEach(m=>{ const av=getAv(m.avatarId); if(av.src){new Image().src=av.src; new Image().src=av.srcSm;} });
-['avatar3'].forEach(id=>{ const av=getAv(id); if(av.src){new Image().src=av.src; new Image().src=av.srcSm;} });
 
 // Registar service worker
 if('serviceWorker' in navigator) {
