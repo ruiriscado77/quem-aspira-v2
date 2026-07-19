@@ -72,15 +72,18 @@
   .done-sub { font-size: 14px; color: var(--ink-soft); font-weight: 600; }
   .confetti-piece { position: absolute; top: 50%; left: 50%; width: 7px; height: 11px; border-radius: 2px; opacity: 0; pointer-events: none; animation: confettiBurst 1s ease-out forwards; }
   @keyframes confettiBurst { 0% { opacity: 1; transform: translate(-50%,-50%) rotate(0deg); } 100% { opacity: 0; transform: translate(-50%,-50%) rotate(var(--rot)) translate(var(--dx),var(--dy)); } }
-  .random-sub { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 16px; font-weight: 600; }
-  .free-toggle { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px 8px 16px; border-radius: 999px; background: rgba(0,0,0,0.045); border: 1.5px solid var(--border); cursor: pointer; user-select: none; -webkit-user-select: none; margin-bottom: 20px; transition: background 0.2s; }
+  .random-sub { font-size: 13.5px; color: var(--ink-soft); margin-bottom: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+  .free-toggle { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px 8px 16px; border-radius: 999px; background: rgba(0,0,0,0.045); border: 1.5px solid var(--border); cursor: pointer; user-select: none; -webkit-user-select: none; margin-bottom: 16px; transition: background 0.2s; }
   .free-toggle:active { opacity: 0.8; }
   .free-toggle-label { font-size: 13px; font-weight: 800; color: var(--ink-soft); transition: color 0.2s; }
   .free-toggle.on .free-toggle-label { color: var(--ink); }
   .switch { width: 42px; height: 24px; border-radius: 999px; background: rgba(0,0,0,0.15); position: relative; transition: background 0.25s; flex-shrink: 0; }
-  .free-toggle.on .switch { background: var(--btn); }
+  .tgl { cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .tgl:active { opacity: 0.8; }
+  .tgl.on .switch { background: var(--btn); }
   .switch-knob { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.25); transition: transform 0.25s cubic-bezier(.36,1.5,.4,1); }
-  .free-toggle.on .switch-knob { transform: translateX(18px); }
+  .tgl.on .switch-knob { transform: translateX(18px); }
+  .member-sub { font-size: 12px; color: var(--ink-soft); font-weight: 600; margin-top: 1px; }
   .countdown-area { height: 186px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
   .countdown-hint { font-size: 14px; color: var(--ink-soft); font-weight: 600; }
   .countdown-num { font-family: 'Fredoka', sans-serif; font-size: 46px; font-weight: 700; line-height: 1; color: var(--btn); display: inline-block; animation: countdownPop 0.7s cubic-bezier(.36,1.6,.4,1); }
@@ -185,8 +188,8 @@
       <div id="empty-view" style="display:none">
         <div class="card">
           <p style="font-size:44px;margin-bottom:12px">⚙️</p>
-          <p class="done-title" data-i18n="emptyTitle">Sem participantes</p>
-          <p class="done-sub" data-i18n="emptySub">Vai às configurações e adiciona pessoas!</p>
+          <p class="done-title" id="empty-title" data-i18n="emptyTitle">Sem participantes</p>
+          <p class="done-sub" id="empty-sub" data-i18n="emptySub">Vai às configurações e adiciona pessoas!</p>
         </div>
       </div>
     </div>
@@ -195,7 +198,7 @@
       <div class="card">
         <p class="turn-label" data-i18n="drawLabel">Sortear quem começa</p>
         <p class="random-sub" id="draw-sub" data-i18n="drawSub">Faz reset e escolhe aleatoriamente quem aspira este fim de semana.</p>
-        <div class="free-toggle" onclick="toggleFreeMode()">
+        <div class="free-toggle tgl" onclick="toggleFreeMode()">
           <span class="free-toggle-label" data-i18n="drawFreeLabel">Sorteio livre</span>
           <div class="switch" id="free-switch"><div class="switch-knob"></div></div>
         </div>
@@ -222,6 +225,12 @@
         </div>
       </div>
     </div>
+  </div>
+  <div class="history-section" id="free-section" style="display:none">
+    <div class="history-head">
+      <h2 data-i18n="freeWho">Quem participa?</h2>
+    </div>
+    <div class="history-list" id="free-list"></div>
   </div>
   <div class="history-section" id="history-section">
     <div class="history-head">
@@ -274,6 +283,12 @@ const STRINGS = {
     confirmClearHistory:'Limpar todo o histórico?',
     confirmRemoveEntry:'Remover este registo?',
     membersEmpty:'Sem participantes.',
+    memberRotOn:'Aspira', memberRotOff:'Só sorteio livre',
+    alertFreeMin:'Escolhe pelo menos uma pessoa!',
+    alertRotMin:'Ativa pelo menos uma pessoa na rotação!',
+    emptyRotTitle:'Ninguém na rotação',
+    emptyRotSub:'Liga o interruptor "Aspira" a alguém nas configurações!',
+    freeWho:'Quem participa?',
     themeSunset:'Pôr do Sol', themeOcean:'Oceano', themeForest:'Floresta',
     themeCandy:'Candy', themeLavanda:'Lavanda', themeCoral:'Coral',
   },
@@ -301,6 +316,12 @@ const STRINGS = {
     confirmClearHistory:'Clear all history?',
     confirmRemoveEntry:'Remove this record?',
     membersEmpty:'No participants.',
+    memberRotOn:'Vacuums', memberRotOff:'Free draw only',
+    alertFreeMin:'Pick at least one person!',
+    alertRotMin:'Enable at least one person in the rotation!',
+    emptyRotTitle:'No one in the rotation',
+    emptyRotSub:'Turn on the "Vacuums" switch for someone in settings!',
+    freeWho:'Who takes part?',
     themeSunset:'Sunset', themeOcean:'Ocean', themeForest:'Forest',
     themeCandy:'Candy', themeLavanda:'Lavender', themeCoral:'Coral',
   }
@@ -313,8 +334,8 @@ function applyLang() {
   if(lpt) lpt.classList.toggle('active', (state.lang||'pt')==='pt');
   if(len) len.classList.toggle('active', state.lang==='en');
   renderTurno(); renderHistory();
-  if(freeMode) document.getElementById('draw-sub').textContent=t('drawSubFree');
-  if(document.getElementById('panel-config').classList.contains('active')) renderThemeGrid();
+  if(freeMode) { document.getElementById('draw-sub').textContent=t('drawSubFree'); }
+  if(document.getElementById('panel-config').classList.contains('active')) { renderThemeGrid(); renderMembersList(); }
 }
 function selectLang(lang) { state.lang=lang; saveState(); applyLang(); }
 
@@ -389,14 +410,22 @@ function makeImg(id, sm) {
   return i;
 }
 
-function nxtIdx(i) { return state.members.length ? (i+1)%state.members.length : 0; }
+function rotMembers() { return state.members.filter(m=>m.inRotation!==false); }
+function nxtIdx(i, len) { return len ? (i+1)%len : 0; }
 
 function renderTurno() {
   const empty=document.getElementById('empty-view'), pend=document.getElementById('pending-view'), done=document.getElementById('done-view');
-  if(!state.members.length) { pend.style.display='none'; done.style.display='none'; empty.style.display='block'; return; }
+  const rot=rotMembers();
+  if(!state.members.length || !rot.length) {
+    pend.style.display='none'; done.style.display='none'; empty.style.display='block';
+    const noneAtAll=!state.members.length;
+    document.getElementById('empty-title').textContent=t(noneAtAll?'emptyTitle':'emptyRotTitle');
+    document.getElementById('empty-sub').textContent=t(noneAtAll?'emptySub':'emptyRotSub');
+    return;
+  }
   empty.style.display='none';
-  if(state.currentIdx>=state.members.length) state.currentIdx=0;
-  const cur=state.members[state.currentIdx], nxt=state.members[nxtIdx(state.currentIdx)];
+  if(state.currentIdx>=rot.length) state.currentIdx=0;
+  const cur=rot[state.currentIdx], nxt=rot[nxtIdx(state.currentIdx, rot.length)];
   const wrap=document.getElementById('main-av-wrap'); wrap.innerHTML='';
   const avDiv=document.createElement('div'); avDiv.className='av-wrap av-lg'+(state.done?' happy':'');
   const circle=document.createElement('div'); circle.className='av-circle'; circle.appendChild(makeImg(cur.avatarId,false));
@@ -416,12 +445,13 @@ function renderTurno() {
 }
 
 function markDone() {
-  if(!state.members.length) return;
+  const rot=rotMembers(); if(!rot.length) return;
+  if(state.currentIdx>=rot.length) state.currentIdx=0;
   state.done=true; saveState();
-  const cur=state.members[state.currentIdx];
+  const cur=rot[state.currentIdx];
   hist.push({memberId:cur.id, memberName:cur.name, date:new Date().toISOString()});
   saveHistory(); renderTurno(); renderHistory(); fireConfetti();
-  setTimeout(()=>{ state.currentIdx=nxtIdx(state.currentIdx); state.done=false; saveState(); renderTurno(); }, 3000);
+  setTimeout(()=>{ const r=rotMembers(); state.currentIdx=nxtIdx(state.currentIdx, r.length); state.done=false; saveState(); renderTurno(); }, 3000);
 }
 
 function fmtDate(iso) {
@@ -444,7 +474,21 @@ function renderSettings() { renderMembersList(); renderThemeGrid(); }
 function renderMembersList() {
   const list=document.getElementById('members-list');
   if(!state.members.length) { list.innerHTML='<div class="history-empty">'+t('membersEmpty')+'</div>'; return; }
-  list.innerHTML=state.members.map(m=>`<div class="member-row"><div class="av-sm"><img src="${avSrc(m.avatarId,true)}" alt="${m.name}"></div><div class="member-info"><div class="member-name">${m.name}</div></div><div class="member-actions"><button class="icon-btn icon-btn-edit" onclick="openSheet('${m.id}')"><i class="ti ti-pencil"></i></button><button class="icon-btn icon-btn-del" onclick="deleteMember('${m.id}')"><i class="ti ti-trash"></i></button></div></div>`).join('');
+  list.innerHTML=state.members.map(m=>{
+    const on=m.inRotation!==false;
+    return `<div class="member-row"><div class="av-sm"><img src="${avSrc(m.avatarId,true)}" alt="${m.name}"></div><div class="member-info"><div class="member-name">${m.name}</div><div class="member-sub">${t(on?'memberRotOn':'memberRotOff')}</div></div><div class="tgl ${on?'on':''}" onclick="toggleRotation('${m.id}')"><div class="switch"><div class="switch-knob"></div></div></div><div class="member-actions"><button class="icon-btn icon-btn-edit" onclick="openSheet('${m.id}')"><i class="ti ti-pencil"></i></button><button class="icon-btn icon-btn-del" onclick="deleteMember('${m.id}')"><i class="ti ti-trash"></i></button></div></div>`;
+  }).join('');
+}
+function toggleRotation(memberId) {
+  const rotBefore=rotMembers();
+  const curId=rotBefore[state.currentIdx]?rotBefore[state.currentIdx].id:null;
+  const m=state.members.find(x=>x.id===memberId); if(!m) return;
+  m.inRotation = m.inRotation===false;
+  const rot=rotMembers();
+  const idx=curId?rot.findIndex(x=>x.id===curId):-1;
+  if(idx>=0) { state.currentIdx=idx; }
+  else { state.currentIdx=0; state.done=false; }
+  saveState(); renderTurno(); renderMembersList();
 }
 function renderThemeGrid() {
   document.getElementById('theme-grid').innerHTML=THEMES.map(th=>`<div class="theme-card ${th.id===state.themeId?'selected':''}" onclick="selectTheme('${th.id}')"><div class="theme-preview" style="background:linear-gradient(135deg,${th.from},${th.mid},${th.to})"></div><div class="theme-label">${t(th.nameKey)}</div></div>`).join('');
@@ -471,8 +515,8 @@ function saveMember() {
   const nameEl=document.getElementById('edit-name'); const name=nameEl.value.trim();
   if(!name) { nameEl.classList.add('error'); nameEl.addEventListener('animationend',()=>nameEl.classList.remove('error'),{once:true}); nameEl.focus(); return; }
   if(editingId) { const idx=state.members.findIndex(m=>m.id===editingId); if(idx!==-1) state.members[idx]={...state.members[idx],name,avatarId:editingAvId}; }
-  else { state.members.push({id:'m'+Date.now().toString(36), name, avatarId:editingAvId}); }
-  if(state.currentIdx>=state.members.length) state.currentIdx=0;
+  else { state.members.push({id:'m'+Date.now().toString(36), name, avatarId:editingAvId, inRotation:true}); }
+  if(state.currentIdx>=rotMembers().length) state.currentIdx=0;
   saveState(); closeSheet(); renderTurno(); renderMembersList(); renderHistory();
 }
 function deleteMember(memberId) {
@@ -480,7 +524,7 @@ function deleteMember(memberId) {
   if(!confirm(t('confirmRemoveMember'))) return;
   const idx=state.members.findIndex(m=>m.id===memberId); if(idx===-1) return;
   state.members.splice(idx,1);
-  if(state.currentIdx>=state.members.length) state.currentIdx=0;
+  if(state.currentIdx>=rotMembers().length) state.currentIdx=0;
   state.done=false; saveState(); renderTurno(); renderMembersList();
 }
 
@@ -489,25 +533,51 @@ function switchTab(t) {
     document.querySelectorAll('.tab')[i].classList.toggle('active',t===name);
     document.getElementById('panel-'+name).classList.toggle('active',t===name);
   });
-  document.getElementById('history-section').style.display=t==='config'?'none':'block';
+  document.getElementById('history-section').style.display=t==='turno'?'block':'none';
+  document.getElementById('free-section').style.display=(t==='sorteio'&&freeMode)?'block':'none';
   if(t==='config') renderSettings();
+  if(t==='sorteio') lockDrawSub();
+  if(t==='sorteio'&&freeMode) { const ids=new Set(state.members.map(m=>m.id)); freeSel=new Set([...freeSel].filter(id=>ids.has(id))); renderFreeList(); }
 }
 
 let sorting=false;
 let freeMode=false;
+let freeSel=new Set();
+function lockDrawSub() {
+  const el=document.getElementById('draw-sub');
+  el.style.minHeight='';
+  let max=0;
+  ['drawSub','drawSubFree'].forEach(k=>{ el.textContent=t(k); max=Math.max(max, el.offsetHeight); });
+  el.textContent=t(freeMode?'drawSubFree':'drawSub');
+  el.style.minHeight=max+'px';
+}
 function toggleFreeMode() {
   freeMode=!freeMode;
   document.querySelector('.free-toggle').classList.toggle('on', freeMode);
   document.getElementById('draw-sub').textContent=t(freeMode?'drawSubFree':'drawSub');
+  if(freeMode) { freeSel=new Set(state.members.map(m=>m.id)); renderFreeList(); }
+  document.getElementById('free-section').style.display=freeMode?'block':'none';
+}
+function renderFreeList() {
+  document.getElementById('free-list').innerHTML=state.members.map(m=>{
+    const sel=freeSel.has(m.id);
+    return `<div class="history-item"><div class="av-sm"><img src="${avSrc(m.avatarId,true)}" alt="${m.name}"></div><div class="history-info"><div class="history-name">${m.name}</div></div><div class="tgl ${sel?'on':''}" onclick="toggleFreeSel('${m.id}')"><div class="switch"><div class="switch-knob"></div></div></div></div>`;
+  }).join('');
+}
+function toggleFreeSel(id) {
+  if(freeSel.has(id)) freeSel.delete(id); else freeSel.add(id);
+  renderFreeList();
 }
 function startSortear() {
-  if(sorting||!state.members.length) return;
+  if(sorting) return;
+  const pool = freeMode ? state.members.filter(m=>freeSel.has(m.id)) : rotMembers();
+  if(!pool.length) { alert(t(freeMode?'alertFreeMin':'alertRotMin')); return; }
   sorting=true; document.getElementById('random-btn').disabled=true;
   const area=document.getElementById('countdown-area'); let count=3;
   function tick() {
     if(count>0) { area.innerHTML=`<div class="mystery-av"><span class="countdown-num">${count}</span></div>`; count--; setTimeout(tick,700); }
     else {
-      const chosen=Math.floor(Math.random()*state.members.length); const m=state.members[chosen];
+      const chosen=Math.floor(Math.random()*pool.length); const m=pool[chosen];
       if(!freeMode) { state.currentIdx=chosen; state.done=false; saveState(); renderTurno(); }
       const avDiv=document.createElement('div'); avDiv.className='av-wrap av-xl happy';
       const circle=document.createElement('div'); circle.className='av-circle'; circle.appendChild(makeImg(m.avatarId,false));
