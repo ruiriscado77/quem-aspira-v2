@@ -1,4 +1,4 @@
-const CACHE = 'qa-v2-cache-v1';
+const CACHE = 'qa-v2-cache-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -11,6 +11,8 @@ const ASSETS = [
   './avatars/joao-128.png',
   './avatars/rafael-512.png',
   './avatars/rafael-128.png',
+  './avatars/rita-512.png',
+  './avatars/rita-128.png',
 ];
 
 self.addEventListener('install', e => {
@@ -26,7 +28,28 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
-  );
+  const url = new URL(e.request.url);
+  const isAppShell = e.request.mode === 'navigate'
+    || url.pathname.endsWith('/index.html')
+    || url.pathname.endsWith('/');
+
+  if (isAppShell) {
+    // Network-first: a app atualiza-se sempre que há rede; cache só como fallback offline
+    e.respondWith(
+      fetch(e.request)
+        .then(r => {
+          const copy = r.clone();
+          caches.open(CACHE).then(c => c.put(e.request, copy));
+          return r;
+        })
+        .catch(() =>
+          caches.match(e.request).then(c => c || caches.match('./index.html'))
+        )
+    );
+  } else {
+    // Cache-first para assets estáticos (ícones, avatares, manifest)
+    e.respondWith(
+      caches.match(e.request).then(cached => cached || fetch(e.request))
+    );
+  }
 });
